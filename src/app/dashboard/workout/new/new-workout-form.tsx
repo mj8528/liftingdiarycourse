@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { logWorkout } from "./actions";
+import { newWorkout } from "./actions";
 
 type SetEntry = { reps: string; weight: string };
 type ExerciseEntry = { name: string; sets: SetEntry[] };
@@ -15,10 +15,10 @@ function emptyExercise(): ExerciseEntry {
   return { name: "", sets: [{ reps: "", weight: "" }] };
 }
 
-export function LogForm({ date }: { date: string }) {
+export function NewWorkoutForm({ date }: { date: string }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [exercises, setExercises] = useState<ExerciseEntry[]>([emptyExercise()]);
+  const [isPending, startTransition] = useTransition();
 
   function addExercise() {
     setExercises((prev) => [...prev, emptyExercise()]);
@@ -29,9 +29,7 @@ export function LogForm({ date }: { date: string }) {
   }
 
   function updateExerciseName(ei: number, name: string) {
-    setExercises((prev) =>
-      prev.map((ex, i) => (i === ei ? { ...ex, name } : ex))
-    );
+    setExercises((prev) => prev.map((ex, i) => (i === ei ? { ...ex, name } : ex)));
   }
 
   function addSet(ei: number) {
@@ -54,12 +52,7 @@ export function LogForm({ date }: { date: string }) {
     setExercises((prev) =>
       prev.map((ex, i) =>
         i === ei
-          ? {
-              ...ex,
-              sets: ex.sets.map((s, j) =>
-                j === si ? { ...s, [field]: value } : s
-              ),
-            }
+          ? { ...ex, sets: ex.sets.map((s, j) => (j === si ? { ...s, [field]: value } : s)) }
           : ex
       )
     );
@@ -67,17 +60,29 @@ export function LogForm({ date }: { date: string }) {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+
     startTransition(async () => {
-      const result = await logWorkout(formData);
+      const result = await newWorkout({
+        name,
+        date,
+        exercises: exercises.map((ex, ei) => ({
+          name: ex.name,
+          order: ei,
+          sets: ex.sets.map((s, si) => ({
+            setNumber: si + 1,
+            reps: s.reps ? parseInt(s.reps) : null,
+            weightKg: s.weight || null,
+          })),
+        })),
+      });
       router.push(`/dashboard?date=${result.date}`);
     });
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <input type="hidden" name="date" value={date} />
-
       <div className="space-y-1.5">
         <Label htmlFor="name" className="text-zinc-300">
           Workout Name
@@ -92,15 +97,12 @@ export function LogForm({ date }: { date: string }) {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">
-          Exercises
-        </h2>
+        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">Exercises</h2>
 
         {exercises.map((ex, ei) => (
           <div key={ei} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 space-y-4">
             <div className="flex items-center gap-3">
               <Input
-                name="exerciseName"
                 value={ex.name}
                 onChange={(e) => updateExerciseName(ei, e.target.value)}
                 placeholder="Exercise name"
@@ -130,7 +132,6 @@ export function LogForm({ date }: { date: string }) {
               {ex.sets.map((set, si) => (
                 <div key={si} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
                   <Input
-                    name={`reps_${ei}`}
                     value={set.reps}
                     onChange={(e) => updateSet(ei, si, "reps", e.target.value)}
                     type="number"
@@ -139,7 +140,6 @@ export function LogForm({ date }: { date: string }) {
                     className="bg-zinc-800 border-zinc-700 text-zinc-50 placeholder:text-zinc-600 focus-visible:ring-zinc-500 h-8 text-sm"
                   />
                   <Input
-                    name={`weight_${ei}`}
                     value={set.weight}
                     onChange={(e) => updateSet(ei, si, "weight", e.target.value)}
                     type="number"

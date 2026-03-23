@@ -1,10 +1,10 @@
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { LogForm } from "./log-form";
+import { NewWorkoutForm } from "./new-workout-form";
 import { formatDate } from "@/lib/format-date";
 
-export default async function LogWorkoutPage({
+export default async function NewWorkoutPage({
   searchParams,
 }: {
   searchParams: Promise<{ date?: string }>;
@@ -24,12 +24,12 @@ export default async function LogWorkoutPage({
             <ChevronLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Log Workout</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">New Workout</h1>
             <p className="text-sm text-zinc-400 mt-1">{formatDate(date)}</p>
           </div>
         </div>
 
-        <LogForm date={dateStr} />
+        <NewWorkoutForm date={dateStr} />
       </div>
     </div>
   );

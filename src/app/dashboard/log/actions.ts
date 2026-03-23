@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { workouts, exercises, workoutExercises, sets } from "@/db/schema";
@@ -65,5 +64,5 @@ export async function logWorkout(formData: FormData) {
     }
   }
 
-  redirect(`/dashboard?date=${dateStr}`);
+  return { date: dateStr };
 }

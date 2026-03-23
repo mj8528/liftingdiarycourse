@@ -92,3 +92,51 @@ export async function getWorkoutsForDate(date: Date) {
 }
 
 export type WorkoutWithExercises = Awaited<ReturnType<typeof getWorkoutsForDate>>[number];
+
+export type CreateWorkoutInput = {
+  name: string;
+  startedAt: Date;
+  exercises: {
+    name: string;
+    order: number;
+    sets: { setNumber: number; reps: number | null; weightKg: string | null }[];
+  }[];
+};
+
+export async function createWorkout(input: CreateWorkoutInput) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const [workout] = await db
+    .insert(workouts)
+    .values({ userId, name: input.name, startedAt: input.startedAt })
+    .returning({ id: workouts.id });
+
+  for (const ex of input.exercises) {
+    let exercise = await db
+      .select()
+      .from(exercises)
+      .where(eq(exercises.name, ex.name))
+      .then((rows) => rows[0]);
+
+    if (!exercise) {
+      [exercise] = await db.insert(exercises).values({ name: ex.name }).returning();
+    }
+
+    const [workoutExercise] = await db
+      .insert(workoutExercises)
+      .values({ workoutId: workout.id, exerciseId: exercise.id, order: ex.order })
+      .returning({ id: workoutExercises.id });
+
+    for (const set of ex.sets) {
+      await db.insert(sets).values({
+        workoutExerciseId: workoutExercise.id,
+        setNumber: set.setNumber,
+        reps: set.reps,
+        weightKg: set.weightKg,
+      });
+    }
+  }
+
+  return workout;
+}
