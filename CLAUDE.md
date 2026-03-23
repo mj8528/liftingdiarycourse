@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
+## CRITICAL: Always Consult /docs First
+
+Before generating any code, **always check the `/docs` directory** for a relevant documentation file. If a matching doc exists, read it in full before writing any code. This is not optional — it overrides default behavior.
+
 ## Commands
 
 ```bash
