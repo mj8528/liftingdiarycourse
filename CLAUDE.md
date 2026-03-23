@@ -6,7 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## CRITICAL: Always Consult /docs First
 
+## Code Generation Guidelines
+
 Before generating any code, **always check the `/docs` directory** for a relevant documentation file. If a matching doc exists, read it in full before writing any code. This is not optional — it overrides default behavior.
+
+- docs/ui.md
+- docs/data-fetching.md
 
 ## Commands
 
