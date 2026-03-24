@@ -1,19 +1,28 @@
 export const dynamic = "force-dynamic";
 
+import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { LogForm } from "./log-form";
+import { getWorkoutById } from "@/data/workouts";
 import { formatDate } from "@/lib/format-date";
+import { EditWorkoutForm } from "./edit-workout-form";
 
-export default async function LogWorkoutPage({
-  searchParams,
+export default async function EditWorkoutPage({
+  params,
 }: {
-  searchParams: Promise<{ date?: string }>;
+  params: Promise<{ workoutId: string }>;
 }) {
-  const { date: dateParam } = await searchParams;
-  const date = dateParam ? new Date(dateParam) : new Date();
-  const dateStr = format(date, "yyyy-MM-dd");
+  const { workoutId } = await params;
+  const id = parseInt(workoutId);
+
+  if (isNaN(id)) notFound();
+
+  const workout = await getWorkoutById(id);
+
+  if (!workout) notFound();
+
+  const dateStr = format(workout.startedAt, "yyyy-MM-dd");
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-50 px-4 py-10">
@@ -26,12 +35,12 @@ export default async function LogWorkoutPage({
             <ChevronLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Log Workout</h1>
-            <p className="text-sm text-zinc-400 mt-1">{formatDate(date)}</p>
+            <h1 className="text-2xl font-semibold tracking-tight">Edit Workout</h1>
+            <p className="text-sm text-zinc-400 mt-1">{formatDate(workout.startedAt)}</p>
           </div>
         </div>
 
-        <LogForm date={dateStr} />
+        <EditWorkoutForm workout={workout} date={dateStr} />
       </div>
     </div>
   );

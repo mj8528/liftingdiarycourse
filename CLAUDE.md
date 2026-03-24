@@ -14,6 +14,7 @@ Before generating any code, **always check the `/docs` directory** for a relevan
 - docs/data-fetching.md
 - docs/auth.md
 - docs/data-mutations.md
+- docs/routing.md
 
 ## Commands
 

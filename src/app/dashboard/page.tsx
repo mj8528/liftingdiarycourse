@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Dumbbell, Plus } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
