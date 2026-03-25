@@ -98,7 +98,7 @@ export function EditWorkoutForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1.5">
-        <Label htmlFor="name" className="text-zinc-300">
+        <Label htmlFor="name" className="text-foreground">
           Workout Name
         </Label>
         <Input
@@ -107,22 +107,22 @@ export function EditWorkoutForm({
           defaultValue={workout.name}
           placeholder="e.g. Push Day, Leg Day…"
           required
-          className="bg-zinc-900 border-zinc-700 text-zinc-50 placeholder:text-zinc-500 focus-visible:ring-zinc-500"
+          className="bg-card border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
         />
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">Exercises</h2>
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Exercises</h2>
 
         {exercises.map((ex, ei) => (
-          <div key={ei} className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 space-y-4">
+          <div key={ei} className="rounded-xl border border-border bg-card p-4 space-y-4">
             <div className="flex items-center gap-3">
               <Input
                 value={ex.name}
                 onChange={(e) => updateExerciseName(ei, e.target.value)}
                 placeholder="Exercise name"
                 required
-                className="bg-zinc-800 border-zinc-700 text-zinc-50 placeholder:text-zinc-500 focus-visible:ring-zinc-500"
+                className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
               />
               {exercises.length > 1 && (
                 <Button
@@ -130,7 +130,7 @@ export function EditWorkoutForm({
                   variant="ghost"
                   size="icon"
                   onClick={() => removeExercise(ei)}
-                  className="shrink-0 text-zinc-500 hover:text-red-400"
+                  className="shrink-0 text-muted-foreground hover:text-red-400"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -138,7 +138,7 @@ export function EditWorkoutForm({
             </div>
 
             <div className="space-y-2 pl-1">
-              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-xs text-zinc-500 px-1">
+              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-xs text-muted-foreground px-1">
                 <span>Reps</span>
                 <span>Weight (kg)</span>
                 <span />
@@ -152,7 +152,7 @@ export function EditWorkoutForm({
                     type="number"
                     min="0"
                     placeholder="—"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-50 placeholder:text-zinc-600 focus-visible:ring-zinc-500 h-8 text-sm"
+                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
                   />
                   <Input
                     value={set.weight}
@@ -161,7 +161,7 @@ export function EditWorkoutForm({
                     min="0"
                     step="0.5"
                     placeholder="—"
-                    className="bg-zinc-800 border-zinc-700 text-zinc-50 placeholder:text-zinc-600 focus-visible:ring-zinc-500 h-8 text-sm"
+                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
                   />
                   {ex.sets.length > 1 ? (
                     <Button
@@ -169,7 +169,7 @@ export function EditWorkoutForm({
                       variant="ghost"
                       size="icon"
                       onClick={() => removeSet(ei, si)}
-                      className="h-8 w-8 text-zinc-600 hover:text-red-400"
+                      className="h-8 w-8 text-muted-foreground hover:text-red-400"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -184,7 +184,7 @@ export function EditWorkoutForm({
                 variant="ghost"
                 size="sm"
                 onClick={() => addSet(ei)}
-                className="h-7 text-xs text-zinc-500 hover:text-zinc-300 gap-1.5 px-1"
+                className="h-7 text-xs text-muted-foreground hover:text-foreground gap-1.5 px-1"
               >
                 <Plus className="h-3 w-3" />
                 Add set
@@ -197,7 +197,7 @@ export function EditWorkoutForm({
           type="button"
           variant="outline"
           onClick={addExercise}
-          className="w-full border-dashed border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 gap-2"
+          className="w-full border-dashed border-border text-muted-foreground hover:text-foreground hover:bg-muted gap-2"
         >
           <Plus className="h-4 w-4" />
           Add exercise

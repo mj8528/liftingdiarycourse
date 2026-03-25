@@ -40,13 +40,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ClerkProvider>
-            <header className="flex items-center justify-between px-6 py-4 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Lifting Diary</span>
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
-                <HeaderAuth />
-              </div>
-            </header>
+            <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+              <ThemeToggle />
+              <HeaderAuth />
+            </div>
             {children}
           </ClerkProvider>
         </ThemeProvider>
