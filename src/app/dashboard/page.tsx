@@ -19,11 +19,11 @@ export default async function DashboardPage({
   const workouts = await getWorkoutsForDate(date);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 px-4 py-10">
+    <div className="min-h-screen bg-background text-foreground px-4 py-10">
       <div className="mx-auto max-w-2xl space-y-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Workout Diary</h1>
-          <p className="text-sm text-zinc-400 mt-1">View your logged workouts by date.</p>
+          <p className="text-sm text-muted-foreground mt-1">View your logged workouts by date.</p>
         </div>
 
         <div className="flex items-center justify-between gap-3">
@@ -39,12 +39,12 @@ export default async function DashboardPage({
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
             Workouts — {format(date, "EEEE")}
           </h2>
 
           {workouts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-700 py-16 text-zinc-500">
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-muted-foreground">
               <Dumbbell className="h-8 w-8 mb-3" />
               <p className="text-sm">No workouts logged for this date.</p>
             </div>
@@ -52,24 +52,24 @@ export default async function DashboardPage({
             <div className="space-y-3">
               {workouts.map((workout) => (
                 <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="block">
-                <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-colors cursor-pointer">
+                <Card className="bg-card border-border hover:border-muted-foreground/40 transition-colors cursor-pointer">
                   <CardHeader className="pb-1 pt-4 px-5">
-                    <CardTitle className="text-base font-semibold text-zinc-50">
+                    <CardTitle className="text-base font-semibold text-card-foreground">
                       {workout.name}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="px-5 pb-4 space-y-3">
                     {workout.exercises.map((exercise) => (
                       <div key={exercise.id}>
-                        <div className="flex items-center gap-2 text-sm text-zinc-300 mb-1">
-                          <Dumbbell className="h-4 w-4 text-zinc-400" />
+                        <div className="flex items-center gap-2 text-sm text-foreground mb-1">
+                          <Dumbbell className="h-4 w-4 text-muted-foreground" />
                           {exercise.name}
                         </div>
                         <div className="flex flex-wrap gap-2 pl-6">
                           {exercise.sets.map((set) => (
                             <span
                               key={set.id}
-                              className="text-xs bg-zinc-800 text-zinc-300 rounded px-2 py-1"
+                              className="text-xs bg-muted text-muted-foreground rounded px-2 py-1"
                             >
                               {set.reps != null ? `${set.reps} reps` : "—"}
                               {set.weightKg != null ? ` @ ${set.weightKg} kg` : ""}
