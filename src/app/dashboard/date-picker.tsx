@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { formatDate } from "@/lib/format-date";
+import { cn } from "@/lib/utils";
 
 export function DatePicker({ selected }: { selected: Date }) {
   const [open, setOpen] = useState(false);
@@ -51,9 +53,10 @@ export function DatePicker({ selected }: { selected: Date }) {
             DayButton: ({ modifiers, className, ...props }) => {
               const isSelected = modifiers.selected && !modifiers.range_start && !modifiers.range_end && !modifiers.range_middle;
               return (
-                <button
+                <Button
                   {...props}
-                  className={[
+                  variant="ghost"
+                  className={cn(
                     "relative flex aspect-square w-full min-w-9 items-center justify-center rounded-md text-sm font-normal transition-colors",
                     isSelected
                       ? "bg-white text-zinc-900 font-semibold hover:bg-zinc-100"
@@ -64,8 +67,8 @@ export function DatePicker({ selected }: { selected: Date }) {
                       : modifiers.disabled
                       ? "text-zinc-700 cursor-not-allowed"
                       : "text-zinc-200 hover:bg-zinc-800 hover:text-zinc-50",
-                    className ?? "",
-                  ].join(" ")}
+                    className,
+                  )}
                 />
               );
             },

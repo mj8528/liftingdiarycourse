@@ -1,6 +1,7 @@
 "use client";
 
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 export default function HeaderAuth() {
   const { isSignedIn } = useAuth();
@@ -12,14 +13,10 @@ export default function HeaderAuth() {
   return (
     <>
       <SignInButton mode="modal">
-        <button className="px-4 py-2 text-sm font-medium text-zinc-900 bg-white hover:bg-zinc-100 rounded-lg transition-colors">
-          Sign in
-        </button>
+        <Button variant="outline">Sign in</Button>
       </SignInButton>
       <SignUpButton mode="modal">
-        <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors">
-          Sign up
-        </button>
+        <Button>Sign up</Button>
       </SignUpButton>
     </>
   );
