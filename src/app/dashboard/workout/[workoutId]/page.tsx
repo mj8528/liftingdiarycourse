@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { getWorkoutById } from "@/data/workouts";
+import { getWorkoutById, getExercises } from "@/data/workouts";
 import { formatDate } from "@/lib/format-date";
 import { EditWorkoutForm } from "./edit-workout-form";
 
@@ -18,7 +18,10 @@ export default async function EditWorkoutPage({
 
   if (isNaN(id)) notFound();
 
-  const workout = await getWorkoutById(id);
+  const [workout, exerciseOptions] = await Promise.all([
+    getWorkoutById(id),
+    getExercises(),
+  ]);
 
   if (!workout) notFound();
 
@@ -35,12 +38,12 @@ export default async function EditWorkoutPage({
             <ChevronLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Edit Workout</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Log Workout</h1>
             <p className="text-sm text-muted-foreground mt-1">{formatDate(workout.startedAt)}</p>
           </div>
         </div>
 
-        <EditWorkoutForm workout={workout} date={dateStr} />
+        <EditWorkoutForm workout={workout} date={dateStr} exerciseOptions={exerciseOptions.map((e) => e.name)} />
       </div>
     </div>
   );

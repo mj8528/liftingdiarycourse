@@ -6,6 +6,13 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { editWorkout } from "./actions";
 import type { WorkoutDetail } from "@/data/workouts";
 
@@ -25,9 +32,11 @@ function toFormExercises(workout: WorkoutDetail): ExerciseEntry[] {
 export function EditWorkoutForm({
   workout,
   date,
+  exerciseOptions,
 }: {
   workout: WorkoutDetail;
   date: string;
+  exerciseOptions: string[];
 }) {
   const router = useRouter();
   const [exercises, setExercises] = useState<ExerciseEntry[]>(() => toFormExercises(workout));
@@ -114,84 +123,129 @@ export function EditWorkoutForm({
       <div className="space-y-4">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Exercises</h2>
 
-        {exercises.map((ex, ei) => (
-          <div key={ei} className="rounded-xl border border-border bg-card p-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <Input
-                value={ex.name}
-                onChange={(e) => updateExerciseName(ei, e.target.value)}
-                placeholder="Exercise name"
-                required
-                className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-              />
-              {exercises.length > 1 && (
+        {exercises.map((ex, ei) => {
+          const isOther = ex.name !== "" && !exerciseOptions.includes(ex.name);
+          const selectValue = isOther ? "other" : ex.name;
+
+          return (
+            <div key={ei} className="rounded-xl border border-border bg-card p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 space-y-2">
+                  <Select
+                    value={selectValue || undefined}
+                    onValueChange={(val) => {
+                      if (!val) return;
+                      if (val === "other") {
+                        updateExerciseName(ei, "other");
+                      } else {
+                        updateExerciseName(ei, val);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="bg-muted border-border text-foreground focus:ring-ring font-medium">
+                      <SelectValue placeholder="Select exercise…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {exerciseOptions.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {(selectValue === "other" || isOther) && (
+                    <Input
+                      value={ex.name === "other" ? "" : ex.name}
+                      onChange={(e) => updateExerciseName(ei, e.target.value)}
+                      placeholder="Enter exercise name…"
+                      required
+                      autoFocus
+                      className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
+                    />
+                  )}
+                </div>
+
+                {exercises.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeExercise(ei)}
+                    className="shrink-0 text-muted-foreground hover:text-red-400"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="grid grid-cols-[2rem_1fr_1fr_2rem] gap-2 text-xs text-muted-foreground px-1">
+                  <span>#</span>
+                  <span>Reps</span>
+                  <span>Weight (kg)</span>
+                  <span />
+                </div>
+
+                {ex.sets.map((set, si) => {
+                  const isLogged = set.reps !== "" && set.weight !== "";
+                  return (
+                    <div
+                      key={si}
+                      className={`grid grid-cols-[2rem_1fr_1fr_2rem] gap-2 items-center rounded-lg px-1 py-0.5 transition-colors ${
+                        isLogged ? "bg-green-950/30 border-l-2 border-green-500" : ""
+                      }`}
+                    >
+                      <span className="text-xs text-muted-foreground font-mono text-center">{si + 1}</span>
+                      <Input
+                        value={set.reps}
+                        onChange={(e) => updateSet(ei, si, "reps", e.target.value)}
+                        type="number"
+                        min="0"
+                        placeholder="—"
+                        className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
+                      />
+                      <Input
+                        value={set.weight}
+                        onChange={(e) => updateSet(ei, si, "weight", e.target.value)}
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="—"
+                        className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
+                      />
+                      {ex.sets.length > 1 ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeSet(ei, si)}
+                          className="h-8 w-8 text-muted-foreground hover:text-red-400"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      ) : (
+                        <div className="h-8 w-8" />
+                      )}
+                    </div>
+                  );
+                })}
+
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
-                  onClick={() => removeExercise(ei)}
-                  className="shrink-0 text-muted-foreground hover:text-red-400"
+                  size="sm"
+                  onClick={() => addSet(ei)}
+                  className="h-7 text-xs text-muted-foreground hover:text-foreground gap-1.5 px-1"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Plus className="h-3 w-3" />
+                  Add set
                 </Button>
-              )}
-            </div>
-
-            <div className="space-y-2 pl-1">
-              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-xs text-muted-foreground px-1">
-                <span>Reps</span>
-                <span>Weight (kg)</span>
-                <span />
               </div>
-
-              {ex.sets.map((set, si) => (
-                <div key={si} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
-                  <Input
-                    value={set.reps}
-                    onChange={(e) => updateSet(ei, si, "reps", e.target.value)}
-                    type="number"
-                    min="0"
-                    placeholder="—"
-                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
-                  />
-                  <Input
-                    value={set.weight}
-                    onChange={(e) => updateSet(ei, si, "weight", e.target.value)}
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    placeholder="—"
-                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 text-sm"
-                  />
-                  {ex.sets.length > 1 ? (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeSet(ei, si)}
-                      className="h-8 w-8 text-muted-foreground hover:text-red-400"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  ) : (
-                    <div className="h-8 w-8" />
-                  )}
-                </div>
-              ))}
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => addSet(ei)}
-                className="h-7 text-xs text-muted-foreground hover:text-foreground gap-1.5 px-1"
-              >
-                <Plus className="h-3 w-3" />
-                Add set
-              </Button>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         <Button
           type="button"
@@ -205,7 +259,7 @@ export function EditWorkoutForm({
       </div>
 
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Saving…" : "Save Changes"}
+        {isPending ? "Saving…" : "Save Workout"}
       </Button>
     </form>
   );
