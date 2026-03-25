@@ -4,9 +4,13 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Moon, Sun, SunMoon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-const themes = ["system", "light", "dark"] as const;
-type Theme = (typeof themes)[number];
+type Theme = "light" | "dark" | "system";
 
 const icons: Record<Theme, React.ReactNode> = {
   system: <SunMoon className="size-4" />,
@@ -14,11 +18,11 @@ const icons: Record<Theme, React.ReactNode> = {
   dark: <Moon className="size-4" />,
 };
 
-const labels: Record<Theme, string> = {
-  system: "System",
-  light: "Light",
-  dark: "Dark",
-};
+const options: { value: Theme; label: string }[] = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "system", label: "System" },
+];
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -34,21 +38,27 @@ export function ThemeToggle() {
 
   const current = (theme as Theme) ?? "system";
 
-  function cycleTheme() {
-    const currentIndex = themes.indexOf(current);
-    const next = themes[(currentIndex + 1) % themes.length];
-    setTheme(next);
-  }
-
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={cycleTheme}
-      aria-label={`Current theme: ${labels[current]}. Click to switch.`}
-      title={`Theme: ${labels[current]}`}
-    >
-      {icons[current]}
-    </Button>
+    <Popover>
+      <PopoverTrigger
+        render={<Button variant="ghost" size="icon" aria-label="Select theme" />}
+      >
+        {icons[current]}
+      </PopoverTrigger>
+      <PopoverContent className="w-36 p-1" align="end">
+        {options.map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => setTheme(value)}
+            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
+              current === value ? "bg-accent text-accent-foreground" : ""
+            }`}
+          >
+            {icons[value]}
+            {label}
+          </button>
+        ))}
+      </PopoverContent>
+    </Popover>
   );
 }
